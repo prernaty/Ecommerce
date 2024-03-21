@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @OpenAPI30
-public class ProductserviceApplication {
+public class Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ProductserviceApplication.class, args);
+		SpringApplication.run(Application.class, args);
 	}
 
 }

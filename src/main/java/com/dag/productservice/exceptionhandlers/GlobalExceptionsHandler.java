@@ -8,32 +8,32 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.dag.productservice.exceptionhandlers.exceptions.NotFoundException;
 
 @ControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionsHandler {
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ResponseErrorDto> handleNotFoundException(NotFoundException notFound){
+    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException notFound){
         return new ResponseEntity<>(
-                new ResponseErrorDto(notFound.getErrorMessage(), HttpStatus.NOT_FOUND),
+                new ErrorResponse(notFound.getErrorMessage(), HttpStatus.NOT_FOUND),
                 HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ResponseErrorDto> handleIllegalArgumentException(IllegalArgumentException illegalArgument){
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException illegalArgument){
         return new ResponseEntity<>(
-                new ResponseErrorDto(illegalArgument.getMessage(), HttpStatus.BAD_REQUEST),
+                new ErrorResponse(illegalArgument.getMessage(), HttpStatus.BAD_REQUEST),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<ResponseErrorDto> handleNullPointerException(NullPointerException nullPointer){
+    public ResponseEntity<ErrorResponse> handleNullPointerException(NullPointerException nullPointer){
         return new ResponseEntity<>(
-                new ResponseErrorDto(nullPointer.getMessage(), HttpStatus.BAD_REQUEST),
+                new ErrorResponse(nullPointer.getMessage(), HttpStatus.BAD_REQUEST),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ResponseErrorDto> handleException(Exception exception){
+    public ResponseEntity<ErrorResponse> handleException(Exception exception){
         return new ResponseEntity<>(
-                new ResponseErrorDto(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR),
+                new ErrorResponse(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

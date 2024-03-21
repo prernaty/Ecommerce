@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class CategoryRequestDto {
+public class ProductCategoryRequestDto {
     String name;
     String description;
     ProductRequestDto[] products;

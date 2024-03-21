@@ -1,7 +1,7 @@
 package com.dag.productservice.controller;
 
 import com.dag.productservice.dto.CategoryResponseDto;
-import com.dag.productservice.dto.CategoryRequestDto;
+import com.dag.productservice.dto.ProductCategoryRequestDto;
 import com.dag.productservice.services.category.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,22 +9,22 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/categories")
-public class CategoriesController {
+public class ProductCategoryController {
 
     CategoryService categoryService;
 
-    public CategoriesController(CategoryService categoryService) {
+    public ProductCategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
     @PostMapping
-    public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody CategoryRequestDto CategoryRequestDto) {
-        return ResponseEntity.ok(categoryService.createCategory(CategoryRequestDto));
+    public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody ProductCategoryRequestDto ProductCategoryRequestDto) {
+        return ResponseEntity.ok(categoryService.createCategory(ProductCategoryRequestDto));
     }
     
     @PutMapping("/{id}")
     public ResponseEntity<CategoryResponseDto> updateCategoryById(@PathVariable("id") String id,
-            @RequestBody CategoryRequestDto CategoryRequestDto) {
-        return new ResponseEntity<>(categoryService.updateCategoryById(id, CategoryRequestDto), HttpStatus.OK);
+            @RequestBody ProductCategoryRequestDto ProductCategoryRequestDto) {
+        return new ResponseEntity<>(categoryService.updateCategoryById(id, ProductCategoryRequestDto), HttpStatus.OK);
     }
     
     @GetMapping

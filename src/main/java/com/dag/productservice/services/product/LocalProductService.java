@@ -1,7 +1,7 @@
 package com.dag.productservice.services.product;
 
-import com.dag.productservice.dao.LocalProductRepository;
-import com.dag.productservice.dao.schema.CategoryRepository;
+import com.dag.productservice.dao.ProductsRepository;
+import com.dag.productservice.dao.schema.ProductCategoryRepository;
 import com.dag.productservice.dto.ProductRequestDto;
 import com.dag.productservice.dto.ProductResponseDto;
 import com.dag.productservice.exceptionhandlers.exceptions.NotFoundException;
@@ -18,18 +18,18 @@ import java.util.UUID;
 @Primary
 public class LocalProductService implements ProductService {
 
-    private final LocalProductRepository localProductRepository;
-    private final CategoryRepository categoryRepository;
+    private final ProductsRepository productsRepository;
+    private final ProductCategoryRepository productCategoryRepository;
 
-    public LocalProductService(LocalProductRepository localProductRepository,
-                               CategoryRepository categoryRepository) {
-        this.localProductRepository = localProductRepository;
-        this.categoryRepository = categoryRepository;
+    public LocalProductService(ProductsRepository productsRepository,
+                               ProductCategoryRepository categoryRepository) {
+        this.productsRepository = productsRepository;
+        this.productCategoryRepository = categoryRepository;
     }
 
     @Override
     public ProductResponseDto getProductById(String id) {
-        Optional<Product> product = this.localProductRepository.findById(UUID.fromString(id));
+        Optional<Product> product = this.productsRepository.findById(UUID.fromString(id));
         if (product.isEmpty()) {
             throw new NotFoundException("Product not found");
         } else
@@ -50,11 +50,11 @@ public class LocalProductService implements ProductService {
             if (requestDto.getCategory() != null && !requestDto.getCategory().isEmpty()) {
                 if (!Validators.UUID_VALIDATOR.get().isValid(requestDto.getCategory()))
                     throw new IllegalArgumentException("Invalid input");
-                Category category = this.categoryRepository.findById(
+                Category category = this.productCategoryRepository.findById(
                         UUID.fromString(requestDto.getCategory())).orElse(null);
                 product.setCategory(category);
             }
-            Product createdProduct = this.localProductRepository.save(product);
+            Product createdProduct = this.productsRepository.save(product);
             return new ProductResponseDto(createdProduct);
         }
         throw new IllegalArgumentException("Invalid input");
@@ -62,7 +62,7 @@ public class LocalProductService implements ProductService {
 
     @Override
     public ProductResponseDto[] getAllProducts() {
-        return this.localProductRepository.findAll().stream()
+        return this.productsRepository.findAll().stream()
                 .map(ProductResponseDto::new).toArray(ProductResponseDto[]::new);
     }
 
@@ -71,9 +71,9 @@ public class LocalProductService implements ProductService {
         if (!Validators.UUID_VALIDATOR.get().isValid(id))
             throw new IllegalArgumentException("Invalid input");
         UUID uuid = UUID.fromString(id);
-        if (this.localProductRepository.existsById(uuid)) {
-            Product product = this.localProductRepository.findById(uuid).get();
-            this.localProductRepository.deleteById(uuid);
+        if (this.productsRepository.existsById(uuid)) {
+            Product product = this.productsRepository.findById(uuid).get();
+            this.productsRepository.deleteById(uuid);
             return new ProductResponseDto(product);
         }
         throw new NotFoundException("Product not found");
@@ -86,13 +86,13 @@ public class LocalProductService implements ProductService {
                 Validators.NON_NULL_CHECK.get().isValid(requestDto.getTitle()) &&
                 Validators.UUID_VALIDATOR.get().isValid(id)) {
             UUID uuid = UUID.fromString(id);
-            if (this.localProductRepository.existsById(uuid)) {
-                Product product = this.localProductRepository.findById(uuid).orElse(null);
+            if (this.productsRepository.existsById(uuid)) {
+                Product product = this.productsRepository.findById(uuid).orElse(null);
                 product.setTitle(requestDto.getTitle());
                 product.setName(requestDto.getName());
                 product.setDescription(requestDto.getDescription());
                 product.setPrice(requestDto.getPrice());
-                Product updatedProduct = this.localProductRepository.save(product);
+                Product updatedProduct = this.productsRepository.save(product);
                 return new ProductResponseDto(updatedProduct);
             } else
                 throw new NotFoundException("Product not found");

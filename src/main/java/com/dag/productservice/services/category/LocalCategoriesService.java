@@ -1,7 +1,7 @@
 package com.dag.productservice.services.category;
 
-import com.dag.productservice.dao.schema.CategoryRepository;
-import com.dag.productservice.dto.CategoryRequestDto;
+import com.dag.productservice.dao.schema.ProductCategoryRepository;
+import com.dag.productservice.dto.ProductCategoryRequestDto;
 import com.dag.productservice.dto.CategoryResponseDto;
 import com.dag.productservice.dto.ProductResponseDto;
 import com.dag.productservice.exceptionhandlers.exceptions.NotFoundException;
@@ -17,10 +17,10 @@ import java.util.UUID;
 @Service
 public class LocalCategoriesService implements CategoryService {
 
-    private final CategoryRepository categoryRepository;
+    private final ProductCategoryRepository productCategoryRepository;
 
-    public LocalCategoriesService(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    public LocalCategoriesService(ProductCategoryRepository productCategoryRepository) {
+        this.productCategoryRepository = productCategoryRepository;
     }
 
     /**
@@ -31,7 +31,7 @@ public class LocalCategoriesService implements CategoryService {
     public CategoryResponseDto findCategoryById(String id) {
         UUID uuid = getUuidFromString(id);
 
-        Category category = categoryRepository.findById(uuid).orElse(null);
+        Category category = productCategoryRepository.findById(uuid).orElse(null);
 
         assert category != null;
 
@@ -43,7 +43,7 @@ public class LocalCategoriesService implements CategoryService {
      */
     @Override
     public CategoryResponseDto[] findCategories() {
-        List<Category> categories = categoryRepository.findAll();
+        List<Category> categories = productCategoryRepository.findAll();
         return categories.stream().
                 map(this::serialistToCategoryDto).toArray(CategoryResponseDto[]::new);
     }
@@ -57,45 +57,45 @@ public class LocalCategoriesService implements CategoryService {
     public CategoryResponseDto[] findCategoriesIn(List<String> ids) {
         List<UUID> uuids = new ArrayList<>();
         ids.forEach(id -> uuids.add(getUuidFromString(id)));
-        List<Category> categories = categoryRepository.findAllById(uuids);
+        List<Category> categories = productCategoryRepository.findAllById(uuids);
         return categories.stream().
                 map(this::serialistToCategoryDto).toArray(CategoryResponseDto[]::new);
     }
 
     /**
-     * @param categoryRequestDto
+     * @param productCategoryRequestDto
      * @return
      */
     @Override
-    public CategoryResponseDto createCategory(CategoryRequestDto categoryRequestDto) {
-        if (categoryRequestDto == null)
+    public CategoryResponseDto createCategory(ProductCategoryRequestDto productCategoryRequestDto) {
+        if (productCategoryRequestDto == null)
             return null;
         Category category = new Category();
-        category.setName(categoryRequestDto.getName());
-        category.setDescription(categoryRequestDto.getDescription());
+        category.setName(productCategoryRequestDto.getName());
+        category.setDescription(productCategoryRequestDto.getDescription());
         category.setProducts(new ArrayList<>());
-        categoryRepository.save(category);
+        productCategoryRepository.save(category);
         return serialistToCategoryDto(category);
     }
 
     /**
      * @param id
-     * @param categoryRequestDto
+     * @param productCategoryRequestDto
      * @return
      */
     @Override
-    public CategoryResponseDto updateCategoryById(String id, CategoryRequestDto categoryRequestDto) {
-        if (id == null || categoryRequestDto == null)
+    public CategoryResponseDto updateCategoryById(String id, ProductCategoryRequestDto productCategoryRequestDto) {
+        if (id == null || productCategoryRequestDto == null)
             throw new NotFoundException("Category for requested Id not found");
         UUID uuid = getUuidFromString(id);
-        Category category = categoryRepository.findById(uuid).orElse(null);
+        Category category = productCategoryRepository.findById(uuid).orElse(null);
         if (category == null)
             throw new NotFoundException("Category for requested Id not found");
-        category.setName(categoryRequestDto.getName() != null ?
-                categoryRequestDto.getName() : category.getName());
-        category.setDescription(categoryRequestDto.getDescription() != null ?
-                categoryRequestDto.getDescription() : category.getDescription());
-        categoryRepository.save(category);
+        category.setName(productCategoryRequestDto.getName() != null ?
+                productCategoryRequestDto.getName() : category.getName());
+        category.setDescription(productCategoryRequestDto.getDescription() != null ?
+                productCategoryRequestDto.getDescription() : category.getDescription());
+        productCategoryRepository.save(category);
         return serialistToCategoryDto(category);
     }
 
@@ -110,10 +110,10 @@ public class LocalCategoriesService implements CategoryService {
         if (id == null)
             throw new NotFoundException("Category for requested Id not found");
         UUID uuid = getUuidFromString(id);
-        Category category = categoryRepository.findById(uuid).orElse(null);
+        Category category = productCategoryRepository.findById(uuid).orElse(null);
         if (category == null)
             throw new NotFoundException("Category for requested Id not found");
-        categoryRepository.delete(category);
+        productCategoryRepository.delete(category);
         return serialistToCategoryDto(category);
     }
 

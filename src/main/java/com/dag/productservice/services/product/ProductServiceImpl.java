@@ -16,13 +16,13 @@ import java.util.UUID;
 
 @Service
 @Primary
-public class LocalProductService implements ProductService {
+public class ProductServiceImpl implements ProductService {
 
     private final ProductsRepository productsRepository;
     private final ProductCategoryRepository productCategoryRepository;
 
-    public LocalProductService(ProductsRepository productsRepository,
-                               ProductCategoryRepository categoryRepository) {
+    public ProductServiceImpl(ProductsRepository productsRepository,
+                              ProductCategoryRepository categoryRepository) {
         this.productsRepository = productsRepository;
         this.productCategoryRepository = categoryRepository;
     }

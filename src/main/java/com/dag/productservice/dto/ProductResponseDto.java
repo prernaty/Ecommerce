@@ -18,7 +18,6 @@ public class ProductResponseDto {
     String category;
     String description;
 
-    //Write Copy Constructor of Existing class, which will take Product as input and return ProductResponseDto as output.
     public ProductResponseDto(Product product) {
         this.id = String.valueOf(product.getId());
         this.name = product.getName();

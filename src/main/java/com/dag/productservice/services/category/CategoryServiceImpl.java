@@ -8,25 +8,24 @@ import com.dag.productservice.exceptionhandlers.exceptions.NotFoundException;
 import com.dag.productservice.models.Category;
 import com.dag.productservice.models.Product;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
-public class LocalCategoriesService implements CategoryService {
+@Slf4j
+public class CategoryServiceImpl implements CategoryService {
 
     private final ProductCategoryRepository productCategoryRepository;
 
-    public LocalCategoriesService(ProductCategoryRepository productCategoryRepository) {
+    public CategoryServiceImpl(ProductCategoryRepository productCategoryRepository) {
         this.productCategoryRepository = productCategoryRepository;
     }
 
-    /**
-     * @param id
-     * @return
-     */
     @Override
     public CategoryResponseDto findCategoryById(String id) {
         UUID uuid = getUuidFromString(id);
@@ -35,7 +34,7 @@ public class LocalCategoriesService implements CategoryService {
 
         assert category != null;
 
-        return serialistToCategoryDto(category);
+        return convertToResponseDto(category);
     }
 
     /**
@@ -45,87 +44,80 @@ public class LocalCategoriesService implements CategoryService {
     public CategoryResponseDto[] findCategories() {
         List<Category> categories = productCategoryRepository.findAll();
         return categories.stream().
-                map(this::serialistToCategoryDto).toArray(CategoryResponseDto[]::new);
+                map(this::convertToResponseDto).toArray(CategoryResponseDto[]::new);
     }
 
 
-    /**
-     * @param ids
-     * @return
-     */
     @Override
     public CategoryResponseDto[] findCategoriesIn(List<String> ids) {
         List<UUID> uuids = new ArrayList<>();
         ids.forEach(id -> uuids.add(getUuidFromString(id)));
         List<Category> categories = productCategoryRepository.findAllById(uuids);
         return categories.stream().
-                map(this::serialistToCategoryDto).toArray(CategoryResponseDto[]::new);
+                map(this::convertToResponseDto).toArray(CategoryResponseDto[]::new);
     }
 
-    /**
-     * @param productCategoryRequestDto
-     * @return
-     */
+
     @Override
     public CategoryResponseDto createCategory(ProductCategoryRequestDto productCategoryRequestDto) {
-        if (productCategoryRequestDto == null)
+        if (Objects.isNull(productCategoryRequestDto))
             return null;
         Category category = new Category();
         category.setName(productCategoryRequestDto.getName());
         category.setDescription(productCategoryRequestDto.getDescription());
         category.setProducts(new ArrayList<>());
         productCategoryRepository.save(category);
-        return serialistToCategoryDto(category);
+        return convertToResponseDto(category);
     }
 
-    /**
-     * @param id
-     * @param productCategoryRequestDto
-     * @return
-     */
+
     @Override
     public CategoryResponseDto updateCategoryById(String id, ProductCategoryRequestDto productCategoryRequestDto) {
-        if (id == null || productCategoryRequestDto == null)
+        if (id == null || productCategoryRequestDto == null) {
+            log.error("No category found for id {}",id);
             throw new NotFoundException("Category for requested Id not found");
+        }
         UUID uuid = getUuidFromString(id);
         Category category = productCategoryRepository.findById(uuid).orElse(null);
-        if (category == null)
+        if (Objects.isNull(category)) {
+            log.error("Category not found for the request product");
             throw new NotFoundException("Category for requested Id not found");
+        }
         category.setName(productCategoryRequestDto.getName() != null ?
                 productCategoryRequestDto.getName() : category.getName());
         category.setDescription(productCategoryRequestDto.getDescription() != null ?
                 productCategoryRequestDto.getDescription() : category.getDescription());
         productCategoryRepository.save(category);
-        return serialistToCategoryDto(category);
+        log.info("product category successfully saved");
+        return convertToResponseDto(category);
     }
 
 
-    /**
-     * @param id
-     * @return
-     */
     @Override
     @Transactional
     public CategoryResponseDto deleteCategoryById(String id) {
         if (id == null)
-            throw new NotFoundException("Category for requested Id not found");
+            throw new NotFoundException("No Category found for");
         UUID uuid = getUuidFromString(id);
         Category category = productCategoryRepository.findById(uuid).orElse(null);
         if (category == null)
             throw new NotFoundException("Category for requested Id not found");
         productCategoryRepository.delete(category);
-        return serialistToCategoryDto(category);
+        return convertToResponseDto(category);
     }
 
-    private ProductResponseDto[] serialiseToProductsDto(List<Product> products) {
+    private ProductResponseDto[] convertToProductsDto(List<Product> products) {
         if (products == null)
             return null;
         return products.stream().map(ProductResponseDto::new).toArray(ProductResponseDto[]::new);
     }
 
-    private CategoryResponseDto serialistToCategoryDto(Category category) {
-        return new CategoryResponseDto(category.getId().toString(), category.getName(), category.getDescription(),
-                serialiseToProductsDto(category.getProducts()));
+    private CategoryResponseDto convertToResponseDto(Category category) {
+
+        return CategoryResponseDto.builder().id(category.getId().toString()).
+                                            name(category.getName()).
+                                            description(category.getDescription()).
+                                            products(convertToProductsDto(category.getProducts())).build();
     }
 
     private UUID getUuidFromString(String id) {

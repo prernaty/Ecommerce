@@ -9,7 +9,10 @@ import lombok.*;
 @Setter
 @Entity
 @Table(name = "products")
-public class Product extends V0 {
+public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String  id;
     @Column
     @NonNull
     String name;

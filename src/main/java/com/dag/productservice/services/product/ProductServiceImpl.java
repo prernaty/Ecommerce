@@ -29,7 +29,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponseDto getProductById(String id) {
-        Optional<Product> product = this.productsRepository.findById(UUID.fromString(id));
+        Optional<Product> product = this.productsRepository.findById(id);
         if (product.isEmpty()) {
             throw new NotFoundException("Product not found");
         } else
@@ -50,8 +50,7 @@ public class ProductServiceImpl implements ProductService {
             if (requestDto.getCategory() != null && !requestDto.getCategory().isEmpty()) {
                 if (!Validators.UUID_VALIDATOR.get().isValid(requestDto.getCategory()))
                     throw new IllegalArgumentException("Invalid input");
-                Category category = this.productCategoryRepository.findById(
-                        UUID.fromString(requestDto.getCategory())).orElse(null);
+                Category category = this.productCategoryRepository.findById((requestDto.getCategory())).orElse(null);
                 product.setCategory(category);
             }
             Product createdProduct = this.productsRepository.save(product);
@@ -71,9 +70,9 @@ public class ProductServiceImpl implements ProductService {
         if (!Validators.UUID_VALIDATOR.get().isValid(id))
             throw new IllegalArgumentException("Invalid input");
         UUID uuid = UUID.fromString(id);
-        if (this.productsRepository.existsById(uuid)) {
-            Product product = this.productsRepository.findById(uuid).get();
-            this.productsRepository.deleteById(uuid);
+        if (this.productsRepository.existsById(id)) {
+            Product product = this.productsRepository.findById(id).get();
+            this.productsRepository.deleteById(id);
             return new ProductResponseDto(product);
         }
         throw new NotFoundException("Product not found");
@@ -86,8 +85,8 @@ public class ProductServiceImpl implements ProductService {
                 Validators.NON_NULL_CHECK.get().isValid(requestDto.getTitle()) &&
                 Validators.UUID_VALIDATOR.get().isValid(id)) {
             UUID uuid = UUID.fromString(id);
-            if (this.productsRepository.existsById(uuid)) {
-                Product product = this.productsRepository.findById(uuid).orElse(null);
+            if (this.productsRepository.existsById(id)) {
+                Product product = this.productsRepository.findById(id).orElse(null);
                 product.setTitle(requestDto.getTitle());
                 product.setName(requestDto.getName());
                 product.setDescription(requestDto.getDescription());

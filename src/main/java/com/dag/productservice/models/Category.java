@@ -1,9 +1,6 @@
 package com.dag.productservice.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +17,10 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "categories")
-public class Category extends V0 {
+public class Category  {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;
     @Column
     private String name;
 

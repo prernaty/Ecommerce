@@ -1,12 +1,11 @@
 package com.dag.productservice.models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @MappedSuperclass
 @Getter
@@ -14,17 +13,6 @@ import java.util.UUID;
 public abstract class V0 {
 
     @Id
-    @GeneratedValue(generator = "uuid",strategy = GenerationType.UUID)
-    @GenericGenerator(name = "uuid",strategy = "uuid2")
-    protected UUID Id;
-    @Column
-    protected String modifiedBy;
-    @Column
-    protected LocalDateTime modifiedOn;
-    @Column
-    protected String createdBy;
-    @Column
-    protected LocalDateTime createdOn;
-    @Column
-    protected Boolean isDeleted;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 }

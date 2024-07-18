@@ -121,7 +121,7 @@ CREATE TABLE categories (
 
 
 CREATE TABLE payments (
-    Id VARCHAR(255) PRIMARY KEY,
+    Id BIGINT AUTO_INCREMENT PRIMARY KEY,
     modifiedBy VARCHAR(255),
     modifiedOn TIMESTAMP,
     createdBy VARCHAR(255),
@@ -134,6 +134,7 @@ CREATE TABLE payments (
     payment_link VARCHAR(255),
     payment_ref VARCHAR(255)
 );
+
 
 
 

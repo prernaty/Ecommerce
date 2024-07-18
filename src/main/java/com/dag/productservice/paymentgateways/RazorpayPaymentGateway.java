@@ -70,7 +70,8 @@ public class RazorpayPaymentGateway implements PaymentGatewayInterface{
             return PaymentStatus.SUCCESS;
         } else if (paymentStatus.equals("failed")) {
             return PaymentStatus.FAILURE;
-        }
+        }else if(paymentStatus.equals("create"))
+            return PaymentStatus.CREATED;
         return null;
     }
 }

@@ -1,6 +1,7 @@
 package com.dag.productservice.services.payment;
 
 import com.dag.productservice.dao.PaymentRepository;
+import com.dag.productservice.dto.CreatePaymentLinkRequestDto;
 import com.dag.productservice.dto.PaymentLinkResponse;
 import com.dag.productservice.models.Payment;
 import com.dag.productservice.models.PaymentStatus;
@@ -18,20 +19,13 @@ public class PaymentService {
         this.razorpayPaymentGateway = razorpayPaymentGateway;
     }
 
-    public String createPaymentLink(String orderId) {
-        // I need to get the details of the order:
-        //      - amount
+    public String createPaymentLink(CreatePaymentLinkRequestDto createPaymentLinkRequestDto) {
 
-        // Order order = restTemplate.getForObject("", Order.class);
-        // Long amount = order.getAmount();
-        // String userName = order.getUser().getName();
-        // String userMobile = order.getUser().getPhoneNumber();
-        // String userEmail = order.getUser().getEmail();
-
-        Long amount = 1000L;
-        String userName = "Naman Bhalla";
-        String userMobile = "+919999999999";
-        String userEmail = "abc@example.com";
+        Long amount = Long.valueOf(createPaymentLinkRequestDto.getAmount());
+        String userName = createPaymentLinkRequestDto.getUsername();
+        String userMobile = createPaymentLinkRequestDto.getPhone();
+        String userEmail = createPaymentLinkRequestDto.getEmail();
+        String orderId=createPaymentLinkRequestDto.getOrderId();
 
         PaymentGatewayInterface paymentGateway = razorpayPaymentGateway;
 

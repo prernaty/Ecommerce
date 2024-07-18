@@ -48,7 +48,6 @@ public class RazorpayPaymentGateway implements PaymentGatewayInterface{
         PaymentLinkResponse paymentLinkResponse=new PaymentLinkResponse();
         paymentLinkResponse.setShortUrl(payment.get("short_url"));
         paymentLinkResponse.setReferenceId(payment.get("id"));
-        paymentLinkResponse.setPaymentStatus(payment.get("status"));
         return paymentLinkResponse;
     }
 
@@ -70,8 +69,6 @@ public class RazorpayPaymentGateway implements PaymentGatewayInterface{
             return PaymentStatus.SUCCESS;
         } else if (paymentStatus.equals("failed")) {
             return PaymentStatus.FAILURE;
-        }else if(paymentStatus.equals("created"))
-            return PaymentStatus.CREATED;
-        return null;
+        }else return PaymentStatus.PENDING;
     }
 }

@@ -20,6 +20,7 @@ public class Payment  {
     @Column(name = "amount")
     private Long amount;
 
+    @Enumerated(EnumType.STRING)
     @Column(name="status")
     private PaymentStatus paymentStatus;
 

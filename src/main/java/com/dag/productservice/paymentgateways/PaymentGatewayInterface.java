@@ -1,10 +1,11 @@
 package com.dag.productservice.paymentgateways;
 
+import com.dag.productservice.dto.PaymentLinkResponse;
 import com.dag.productservice.models.PaymentStatus;
 
 public interface PaymentGatewayInterface {
 
-    String createPaymentLink(
+    PaymentLinkResponse createPaymentLink(
             Long amount,
             String userName,
             String userEmail,

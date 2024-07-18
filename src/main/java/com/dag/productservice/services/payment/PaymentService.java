@@ -1,6 +1,7 @@
 package com.dag.productservice.services.payment;
 
 import com.dag.productservice.dao.PaymentRepository;
+import com.dag.productservice.dto.PaymentLinkResponse;
 import com.dag.productservice.models.Payment;
 import com.dag.productservice.models.PaymentStatus;
 import com.dag.productservice.paymentgateways.PaymentGatewayInterface;
@@ -34,29 +35,30 @@ public class PaymentService {
 
         PaymentGatewayInterface paymentGateway = razorpayPaymentGateway;
 
-        String paymentLink = paymentGateway.createPaymentLink(
+        PaymentLinkResponse paymentLinkResponse = paymentGateway.createPaymentLink(
                 amount, userName, userEmail, userMobile, orderId
         );
 
         com.dag.productservice.models.Payment payment = new Payment();
-        payment.setPaymentLink(paymentLink);
+        payment.setPaymentLink(paymentLinkResponse.getShortUrl());
+        payment.setPaymentGatewayReferenceId(paymentLinkResponse.getReferenceId());
         payment.setOrderId(orderId);
         payment.setPaymentStatus(PaymentStatus.PENDING);
         payment.setAmount(amount);
 
         paymentRepository.save(payment);
 
-        return paymentLink;
+        return paymentLinkResponse.getShortUrl();
 
     }
 
     public PaymentStatus getPaymentStatus(String paymentGatewayPaymentId) {
 
-        com.dag.productservice.models.Payment payment = paymentRepository.findByPaymentGatewayReferenceId(paymentGatewayPaymentId);
+        com.dag.productservice.models.Payment payment = paymentRepository.findByOrderId(paymentGatewayPaymentId);
         PaymentGatewayInterface paymentGateway = null;
         paymentGateway = razorpayPaymentGateway;
 
-        PaymentStatus paymentStatus = paymentGateway.getPaymentStatus(paymentGatewayPaymentId);;
+        PaymentStatus paymentStatus = paymentGateway.getPaymentStatus(payment.getPaymentGatewayReferenceId());;
 
         payment.setPaymentStatus(paymentStatus);
 

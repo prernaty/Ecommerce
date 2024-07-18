@@ -1,7 +1,7 @@
 package com.dag.productservice.paymentgateways;
 
+import com.dag.productservice.dto.PaymentLinkResponse;
 import com.dag.productservice.models.PaymentStatus;
-import com.razorpay.Payment;
 import com.razorpay.PaymentLink;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
@@ -17,7 +17,7 @@ public class RazorpayPaymentGateway implements PaymentGatewayInterface{
     }
 
     @Override
-    public String createPaymentLink(Long amount, String userName, String userEmail, String userPhone, String orderId) {
+    public PaymentLinkResponse createPaymentLink(Long amount, String userName, String userEmail, String userPhone, String orderId) {
         JSONObject paymentLinkRequest = new JSONObject();
         paymentLinkRequest.put("amount",amount);
         paymentLinkRequest.put("currency","INR");
@@ -45,21 +45,26 @@ public class RazorpayPaymentGateway implements PaymentGatewayInterface{
             System.out.printf("Something went wrong");
         }
 
-        return payment.get("short_url");
+        PaymentLinkResponse paymentLinkResponse=new PaymentLinkResponse();
+        paymentLinkResponse.setShortUrl(payment.get("short_url"));
+        paymentLinkResponse.setReferenceId(payment.get("id"));
+        paymentLinkResponse.setPaymentStatus(payment.get("status"));
+        return paymentLinkResponse;
     }
 
     @Override
     public PaymentStatus getPaymentStatus(String paymentId) {
-        Payment payment = null;
+        PaymentLink payment = null;
 
         try {
-            payment = razorpayClient.payments.fetch(paymentId);
+            payment = razorpayClient.paymentLink.fetch(paymentId);
         } catch (RazorpayException razorpayException) {
             System.out.println(razorpayException);
             System.out.println("Something went wrong");
         }
 
         String paymentStatus = payment.get("status");
+
 
         if (paymentStatus.equals("captured")) {
             return PaymentStatus.SUCCESS;

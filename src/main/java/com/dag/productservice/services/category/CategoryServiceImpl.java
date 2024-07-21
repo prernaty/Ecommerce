@@ -28,7 +28,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponseDto findCategoryById(String id) {
-        UUID uuid = getUuidFromString(id);
 
         Category category = productCategoryRepository.findById(id).orElse(null);
 

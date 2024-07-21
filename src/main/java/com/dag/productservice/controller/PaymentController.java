@@ -8,7 +8,7 @@ import com.dag.productservice.services.payment.PaymentService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/public/payments")
+@RequestMapping("/payments")
 public class PaymentController {
     private PaymentService paymentService;
 

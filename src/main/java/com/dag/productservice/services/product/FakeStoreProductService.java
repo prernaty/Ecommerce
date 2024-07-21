@@ -1,10 +1,11 @@
 package com.dag.productservice.services.product;
 
-import java.util.Objects;
-import java.util.Optional;
-
+import com.dag.productservice.dto.ProductRequestDto;
+import com.dag.productservice.dto.ProductResponseDto;
+import com.dag.productservice.exceptionhandlers.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,11 @@ import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
-import com.dag.productservice.dto.ProductRequestDto;
-import com.dag.productservice.dto.ProductResponseDto;
-import com.dag.productservice.exceptionhandlers.exceptions.NotFoundException;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
+@Primary
 public class FakeStoreProductService implements ProductService {
     RestTemplateBuilder restTemplateBuilder;
 

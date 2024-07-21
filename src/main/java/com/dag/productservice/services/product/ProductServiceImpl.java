@@ -8,14 +8,11 @@ import com.dag.productservice.exceptionhandlers.exceptions.NotFoundException;
 import com.dag.productservice.models.Category;
 import com.dag.productservice.models.Product;
 import com.dag.productservice.validators.Validators;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
-@Primary
 public class ProductServiceImpl implements ProductService {
 
     private final ProductsRepository productsRepository;
@@ -69,7 +66,6 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponseDto deleteproductById(String id) {
         if (!Validators.UUID_VALIDATOR.get().isValid(id))
             throw new IllegalArgumentException("Invalid input");
-        UUID uuid = UUID.fromString(id);
         if (this.productsRepository.existsById(id)) {
             Product product = this.productsRepository.findById(id).get();
             this.productsRepository.deleteById(id);
@@ -84,7 +80,7 @@ public class ProductServiceImpl implements ProductService {
                 Validators.NON_NULL_CHECK.get().isValid(requestDto.getDescription()) &&
                 Validators.NON_NULL_CHECK.get().isValid(requestDto.getTitle()) &&
                 Validators.UUID_VALIDATOR.get().isValid(id)) {
-            UUID uuid = UUID.fromString(id);
+
             if (this.productsRepository.existsById(id)) {
                 Product product = this.productsRepository.findById(id).orElse(null);
                 product.setTitle(requestDto.getTitle());

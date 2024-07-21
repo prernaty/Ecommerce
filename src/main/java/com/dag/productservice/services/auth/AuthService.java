@@ -2,14 +2,15 @@ package com.dag.productservice.services.auth;
 
 import com.dag.productservice.dao.SessionRepository;
 import com.dag.productservice.dao.UserRepository;
-import com.dag.productservice.models.User;
 import com.dag.productservice.dto.UserDTO;
 import com.dag.productservice.models.Role;
 import com.dag.productservice.models.Session;
 import com.dag.productservice.models.SessionStatus;
+import com.dag.productservice.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.MacAlgorithm;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +30,8 @@ public class AuthService {
     private final SessionRepository sessionRepository;
     private UserRepository userRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public static String encodedSecret="Ats/z2iQhSLQpZD/BwYQVbAkLx9ir7I2BWJZ8yH4km0=";
 
     public AuthService(UserRepository userRepository,
                        BCryptPasswordEncoder bCryptPasswordEncoder, SessionRepository sessionRepository) {
@@ -50,8 +53,9 @@ public class AuthService {
             throw new RuntimeException("Invalid password");
         }
 
+        byte[] decodedKey = Base64.getDecoder().decode(encodedSecret);
         MacAlgorithm alg = Jwts.SIG.HS256; //or HS384 or HS256
-        SecretKey key = alg.key().build();
+        SecretKey key = Keys.hmacShaKeyFor(decodedKey);
 
         Map<String, Object> jsonForJwt  = new HashMap<>();
         jsonForJwt .put("email", user.getEmail());
@@ -118,7 +122,10 @@ public class AuthService {
             return SessionStatus.ENDED;
         }
 
+        byte[] decodedKey = Base64.getDecoder().decode(encodedSecret);
+        SecretKey key = Keys.hmacShaKeyFor(decodedKey);
         Jws<Claims> claimsJWS=Jwts.parser()
+                .setSigningKey(key)
                 .build()
                 .parseSignedClaims(token);
 

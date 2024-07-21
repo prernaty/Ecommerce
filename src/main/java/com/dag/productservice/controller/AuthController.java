@@ -36,7 +36,7 @@ public class AuthController {
 
     @PostMapping("/validate")
     public SessionStatus validateToken(@RequestBody ValidateTokenRequestDTO validateTokenRequestDTO){
-        return authService.validateToken(validateTokenRequestDTO.getToken(), validateTokenRequestDTO.getUserId());
+            return authService.validateToken(validateTokenRequestDTO.getToken(), validateTokenRequestDTO.getUserId());
     }
 
 

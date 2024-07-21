@@ -49,15 +49,6 @@ public class AuthService {
         if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
-//        try {
-//            if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
-//                throw new RuntimeException();
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-
-        //String token = RandomStringUtils.randomAlphanumeric(30);
 
         MacAlgorithm alg = Jwts.SIG.HS256; //or HS384 or HS256
         SecretKey key = alg.key().build();
@@ -65,7 +56,6 @@ public class AuthService {
         Map<String, Object> jsonForJwt  = new HashMap<>();
         jsonForJwt .put("email", user.getEmail());
         jsonForJwt .put("createdAt", System.currentTimeMillis());
-//        jsonForJwt.put("roles", user.getRoles());
         jsonForJwt .put("expiresAt", System.currentTimeMillis() + 3600000);
 
         String token= Jwts.builder()
